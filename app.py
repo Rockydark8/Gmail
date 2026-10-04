@@ -7,12 +7,20 @@ from google.genai import types
 
 from prompts import SUMMARY_REQUEST_PROMPT, SYSTEM_PROMPT, WELCOME_MESSAGE_TEMPLATE
 
+import os
+
 MODEL_NAME = "gemini-3.8-flash"
 st.set_page_config(page_title="ReceiptSnap", page_icon="🧾")
 
-GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
-GMAIL_ADDRESS = st.secrets["GMAIL_ADDRESS"]
-GMAIL_APP_PASSWORD = st.secrets["GMAIL_APP_PASSWORD"]
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY", "")
+GMAIL_ADDRESS = os.environ.get("GMAIL_ADDRESS") or st.secrets.get("GMAIL_ADDRESS", "")
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD") or st.secrets.get("GMAIL_APP_PASSWORD", "")
+
+if not GEMINI_API_KEY or not GMAIL_ADDRESS or not GMAIL_APP_PASSWORD:
+    st.error(
+        "Missing required secrets. Add GEMINI_API_KEY, GMAIL_ADDRESS, and GMAIL_APP_PASSWORD in Streamlit Cloud > Settings > Secrets or set them as environment variables."
+    )
+    st.stop()
 
 
 @st.cache_resource
